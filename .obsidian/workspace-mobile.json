@@ -11,10 +11,14 @@
             "id": "7af1c9eb599c3953",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "手机测试.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "新标签页"
+              "title": "手机测试"
             }
           }
         ]
@@ -163,5 +167,7 @@
     }
   },
   "active": "7af1c9eb599c3953",
-  "lastOpenFiles": []
+  "lastOpenFiles": [
+    "手机测试.md"
+  ]
 }
