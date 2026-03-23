@@ -39,11 +39,7 @@ nc -l -p 8888
 
 Linux 下可能有两个版本，用法略有差异：
 
-bash
-
-readlink -f $(which nc)
-
-- `/bin/nc.traditional`：GNU 基础版本（默认）[-1](https://cloud.tencent.com.cn/developer/article/2473236?from=15425&frompage=seopage)
+- `/bin/nc.traditional`：GNU 基础版本（默认,kali内置）[-1](https://cloud.tencent.com.cn/developer/article/2473236?from=15425&frompage=seopage)
     
 - `/bin/nc.openbsd`：OpenBSD 版本，功能更强大[-1](https://cloud.tencent.com.cn/developer/article/2473236?from=15425&frompage=seopage)
 
