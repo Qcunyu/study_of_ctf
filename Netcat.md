@@ -32,3 +32,44 @@ nc -l -p 8888
 ```
 
 **数据流向的本质**：你可以把它理解为 `cat` 命令的网络版——`cat` 在本地文件间复制数据，而 `nc` 在网络连接间复制数据[-1](https://cloud.tencent.com.cn/developer/article/2473236?from=15425&frompage=seopage)[-8](https://www.eccouncil.org/cybersecurity-exchange/ethical-hacking/mastering-netcat-in-penetration-testing-a-step-by-step-tutorial/)。当两端都连接后，任何一端输入的内容会实时出现在另一端，形成双向通信。
+
+# 三、环境要求与安装
+
+### 3.1 查看已安装版本
+
+Linux 下可能有两个版本，用法略有差异：
+
+bash
+
+readlink -f $(which nc)
+
+- `/bin/nc.traditional`：GNU 基础版本（默认）[-1](https://cloud.tencent.com.cn/developer/article/2473236?from=15425&frompage=seopage)
+    
+- `/bin/nc.openbsd`：OpenBSD 版本，功能更强大[-1](https://cloud.tencent.com.cn/developer/article/2473236?from=15425&frompage=seopage)
+
+### 3.2 安装命令
+
+**Debian/Ubuntu**：
+
+bash
+
+复制
+
+下载
+
+sudo apt install netcat
+# 或安装特定版本
+sudo apt install netcat-openbsd   # OpenBSD版本
+sudo apt install netcat-traditional  # GNU版本[citation:1][citation:7]
+
+**CentOS/RHEL**：
+
+bash
+
+复制
+
+下载
+
+sudo yum install nc
+
+**Windows**：下载 ncat（Nmap 项目附带）或原始 nc.exe[-](https://m.w3cschool.cn/dosmlxxsc1/jiszug.html)
