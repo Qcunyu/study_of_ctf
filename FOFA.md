@@ -123,3 +123,44 @@ title="后台管理"
 | `ip`       | 搜索指定IP    | `ip="1.1.1.1"` |
 | `ip_ports` | 搜索IP开放的端口 | 配合ip使用         |
 | `port`     | 搜索开放端口的IP | `port="80"`    |
+# 五、进阶用法
+
+## 5.1 模糊搜索（`*=`）
+
+模糊搜索功能最初是为了解决分词不完整的问题，后来发现可用于更多特定搜索场景[-5](https://nosec.org/home/detail/5071.html)。**注意**：个人版及以上订阅会员或F点单功能消费可用[-5](https://nosec.org/home/detail/5071.html)。
+
+**通配符说明**：
+- `*`：匹配0个或多个任意字符
+- `?`：匹配1个任意字符
+
+**使用示例**：
+```bash
+# 查找子域名包含test的baidu.com资产
+host*="test*.baidu.com"
+# 查找MySQL 5.x.x版本
+banner="mysql version" && banner*="5.?.?"
+# 查找端口为4位数的资产
+domain="fofa.info" && port*="????"
+```
+## 5.2 FID（Feature ID）- 资产特征ID
+**什么是FID？**
+FID是FOFA为每个网站生成的唯一特征标识，通过对网站的多个关键特征（页面结构、响应头、图标等）进行聚合计算得到[-6](https://www.nosec.org/home/detail/5080.html)。
+
+**作用**：
+- 即使网站换了域名、改了IP，只要网站模板相同，FID就相同
+- 可以快速发现使用同一套建站模板的所有网站
+- 常用于钓鱼网站拓线、恶意网站聚类
+- 
+**使用方法**：  
+点击搜索结果页的FID标签即可自动查询，或直接用`fid="xxx"`语法[-6](https://www.nosec.org/home/detail/5080.html)。
+## 5.3 规则集（预置指纹）
+
+FOFA已经对大量常见应用建立了预置规则集（app指纹）。用户在搜索框中输入应用名称时，会自动推荐相关规则[-2](https://www.nosec.org/home/detail/4763.html)[-6](https://www.nosec.org/home/detail/5080.html)。
+
+**查看方式**：
+- 搜索框输入关键词，FOFA会列出已有的规则[-2](https://www.nosec.org/home/detail/4763.html)
+- 规则列表和规则专题中查看[-2](https://www.nosec.org/home/detail/4763.html)
+- 点击左侧筛选栏的规则条目自动添加语法[-10](https://bbs.huaweicloud.com/blogs/399063
+## 5.4 与 [[Hydra]] 配合使用
+
+通过FOFA搜索开放特定服务（如SSH、RDP）的资产，导出IP列表后用`[[Hydra]]`进行弱口令爆破。
