@@ -27,14 +27,29 @@ Hydra不利用漏洞，而是直接攻击==认证机制本身的弱点==——**
 ## 三、环境要求与安装
 
 ### 3.1 操作系统支持
-
 - **Kali Linux**：预装，开箱即用
 - **Ubuntu/Debian**：`sudo apt install hydra`
 - **macOS**：`brew install hydra`
 - **Windows**：通过WSL或使用Cygwin版本
-
 ### 3.2 验证安装
 ```bash
-
 hydra -h
 ```
+
+## 四、基本使用方法（语法格式）
+
+Hydra 的使用方式非常灵活，用户可以根据目标服务类型选择不同的模块。其基本语法如下：
+```bash
+hydra [选项] [目标地址] [服务]
+```
+其中，`[选项]` 包括用户名、密码文件、线程数等；`[目标地址]` 是要攻击的目标 IP 或域名；`[服务]` 是要破解的协议类型（如 ssh、ftp、rdp 等）。
+
+**示例**：
+
+```
+bash
+
+hydra -l root -P /usr/share/wordlists/rockyou.txt -t 4 ssh://192.168.1.100
+```
+
+**说明**：`-l root` 指定单个用户名，`-P` 指定密码字典，`-t 4` 设置4个线程，目标是SSH服务。
