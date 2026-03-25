@@ -53,3 +53,122 @@ cat cupp_dict.txt rockyou.txt | sort -u > final_dict.txt
 ```
 **3. 自定义模板**  
 CUPP 的配置文件 `cupp.cfg` 可修改密码生成规则（如最小长度、是否包含年份等）。
+
+# 三、Crunch
+## 3.1 概念
+Crunch 是一款基于字符集和长度范围的密码字典生成工具。它可以按指定规则生成所有可能的排列组合，适合已知密码格式的场景（如“密码是8位数字”或“以admin开头后跟3位数字”）。
+## 3.2 工作原理
+Crunch 根据用户给出的最小长度、最大长度、字符集，通过递归或迭代方式生成所有可能的字符串组合，并输出到文件或标准输出。它支持指定模式（如 `@@@@` 表示4个任意字符）和多种输出格式。
+
+## 3.3 环境要求与安装
+
+- **Kali Linux**：默认已安装，直接使用 `crunch` 命令。
+    
+- **手动安装**：
+    
+    bash
+    
+    复制
+    
+    下载
+    
+    sudo apt install crunch   # Debian/Ubuntu
+    
+
+## 3.4 基本使用方法（语法格式）
+
+Crunch 的基本语法如下：
+
+bash
+
+复制
+
+下载
+
+crunch <min-len> <max-len> <charset> -o <输出文件>
+
+**示例**：
+
+bash
+
+复制
+
+下载
+
+# 生成所有4位小写字母组合，输出到 words.txt
+crunch 4 4 abcdefghijklmnopqrstuvwxyz -o words.txt
+
+**说明**：`<min-len>` 和 `<max-len>` 是密码长度范围，`<charset>` 是字符集。
+
+### 3.5 常用选项
+
+|选项|说明|示例|
+|---|---|---|
+|`-o`|指定输出文件|`-o dict.txt`|
+|`-t`|指定密码模式（@代表小写字母，%代表数字，^代表特殊符号）|`crunch 8 8 -t admin%%%`|
+|`-p`|生成指定字符串的所有排列（不指定长度）|`crunch 0 0 -p 123 abc`|
+|`-z`|输出时使用 gzip 压缩|`-z gzip`|
+|`-b`|限制输出文件大小（MB），配合 `-o START` 分割|`-b 20mb -o START`|
+|`-l`|指定模式中的占位符映射（当 -t 中包含特殊字符时使用）|`-l @%^`|
+|`-s`|从指定字符串开始生成|`-s admin`|
+|`-e`|在指定字符串处结束|`-e admin999`|
+
+### 3.6 进阶用法
+
+**1. 模式生成（最常用）**
+
+bash
+
+复制
+
+下载
+
+# 生成 8 位密码，前四位固定 "pass"，后四位为数字
+crunch 8 8 -t pass%%%% -o pass_digits.txt
+# 输出：pass0000, pass0001, ..., pass9999
+
+**2. 字符集简写**
+
+bash
+
+复制
+
+下载
+
+# 使用内置字符集：lower（小写），upper（大写），numeric（数字），symbols（符号）
+crunch 4 4 lower -o lower.txt          # 所有4位小写字母
+crunch 6 6 numeric -o digits.txt       # 所有6位数字
+
+**3. 排列生成（不重复排列）**
+
+bash
+
+复制
+
+下载
+
+# 生成 "123", "abc", "ABC" 的所有排列（每个排列长度固定为3）
+crunch 0 0 -p 123 abc ABC > perm.txt
+
+**4. 配合 `[[Hydra]]` 使用**
+
+bash
+
+复制
+
+下载
+
+# 生成动态字典并通过管道直接喂给 Hydra（避免中间文件）
+crunch 8 8 numeric | hydra -l admin -P - ssh://192.168.1.100
+# 注意：-P - 表示从标准输入读取密码
+
+**5. 限制输出大小并分割**
+
+bash
+
+复制
+
+下载
+
+# 每 20MB 生成一个文件，文件名为 chunk_xxxx.txt
+crunch 8 8 numeric -b 20mb -o chunk_%%.txt
