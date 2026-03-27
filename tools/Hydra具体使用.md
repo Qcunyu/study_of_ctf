@@ -80,42 +80,23 @@ hydra -l <用户名> -P <密码字典> mysql://<目标IP[:端口]>
 hydra -l <用户名> -P <密码字典> postgresql://<目标IP[:端口]>
 ```
 ### 3. MSSQL
-
-bash
-
-复制
-
-下载
-
+```bash
 hydra -l <用户名> -P <密码字典> mssql://<目标IP[:端口]>
-
+```
 ### 4. Redis
-
-bash
-
-复制
-
-下载
-
+```bash
 hydra -P <密码字典> redis://<目标IP[:端口]>
-
+```
 - Redis 通常无用户名，只需密码。
-    
 
 ---
 
 ## 四、邮件服务类
 
 ### 1. POP3 / POP3S
-
-bash
-
-复制
-
-下载
-
+```bash
 hydra -l <用户名> -P <密码字典> pop3://<目标IP[:端口]>
-
+```
 ### 2. IMAP / IMAPS
 
 bash
