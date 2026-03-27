@@ -5,7 +5,8 @@
 [[Hydra]]
 SQL注入
 [[SQLmap]]
-
+字典生成
+[[CUPP与Crunch]]
 ## 线上平台
 信息收集
 [[FOFA]] 
