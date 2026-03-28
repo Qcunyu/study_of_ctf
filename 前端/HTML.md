@@ -29,21 +29,21 @@
 
 ## 1. 块级元素（占满整行，可设置宽高）
 
-|标签|作用|
-|---|---|
-|`<h1>`~`<h6>`|标题，`<h1>` 最重要，一个页面建议只用一次|
-|`<p>`|段落|
-|`<div>`|通用容器，无语义，布局主力|
-|`<header>`、`<footer>`|页眉、页脚|
-|`<nav>`|导航栏|
-|`<main>`|主内容区|
-|`<section>`|章节|
-|`<article>`|独立文章|
-|`<ul>`、`<ol>`、`<li>`|无序/有序列表|
-|`<table>`|表格|
-|`<form>`|表单区域|
+| 标签                    | 作用                       |
+| --------------------- | ------------------------ |
+| `<h1>`~`<h6>`         | 标题，`<h1>` 最重要，一个页面建议只用一次 |
+| `<p>`                 | 段落                       |
+| `<div>`               | 通用容器，无语义，布局主力            |
+| `<header>`、`<footer>` | 页眉、页脚                    |
+| `<nav>`               | 导航栏                      |
+| `<main>`              | 主内容区                     |
+| `<section>`           | 章节                       |
+| `<article>`           | 独立文章                     |
+| `<ul>`、`<ol>`、`<li>`  | 无序/有序列表                  |
+| `<table>`             | 表格                       |
+| `<form>`              | 表单区域                     |
 
-### 2. 行内元素（不换行，宽高由内容撑开）
+## 2. 行内元素（不换行，宽高由内容撑开）
 
 |标签|作用|
 |---|---|
@@ -55,14 +55,14 @@
 |`<br>`|换行|
 |`<input>`、`<label>`|表单控件（行内块）|
 
-### 3. 语义化标签（让结构清晰，利于 SEO 和可访问性）
+## 3. 语义化标签（让结构清晰，利于 SEO 和可访问性）
 
 - `<header>`、`<nav>`、`<main>`、`<section>`、`<article>`、`<aside>`、`<footer>`
 - 尽量少用 `<div>` 和 `<span>` 代替语义标签。
 
 ---
 
-## 四、常用属性
+# 四、常用属性
 
 |属性|适用标签|说明|
 |---|---|---|
@@ -75,3 +75,48 @@
 |`alt`|`<img>`|图片无法显示时的替代文本（必须）|
 |`target`|`<a>`|`_blank` 新窗口打开；`_self` 当前窗口|
 |`rel`|`<a>`|如 `noopener noreferrer` 安全属性|
+
+---
+
+# 五、表单（渗透测试重点关注）
+表单是用户输入数据的主要方式，也是安全测试的关键点。
+## 1. 基本结构
+```html
+<form action="login.php" method="POST">
+    <label for="username">用户名：</label>
+    <input type="text" name="username" id="username" required>
+    <br>
+    <label for="password">密码：</label>
+    <input type="password" name="password" id="password">
+    <br>
+    <input type="hidden" name="token" value="abc123">   <!-- 隐藏字段 -->
+    <button type="submit">登录</button>
+</form>
+```
+## 2. 常见 input 类型
+
+|`type`|说明|
+|---|---|
+|`text`|单行文本|
+|`password`|密码（输入内容掩盖）|
+|`email`|邮箱（会校验格式）|
+|`number`|数字|
+|`radio`|单选按钮（同 name 一组）|
+|`checkbox`|复选框|
+|`file`|文件上传|
+|`hidden`|隐藏字段，不在页面显示，但会随表单提交|
+|`submit`|提交按钮|
+
+## 3. 其他表单标签
+- `<select>` + `<option>`：下拉选择框
+- `<textarea>`：多行文本域
+
+## 4. 渗透测试中关注点
+
+- **`action` 属性**：表单提交的目标 URL，可能指向其他域或内网地址。
+- **`method`**：`GET` 或 `POST`。GET 参数会在 URL 中显示，容易被浏览器记录；POST 相对隐蔽。
+- **`hidden` 字段**：可能存储 token、用户 ID、权限标识，可尝试篡改。
+    
+- **`required` 属性**：前端验证，可被绕过（直接构造请求）。绕过方式常借助 [[JavaScript]] 修改或直接用 [[Burp Suite]] 重放。
+    
+- **文件名**：`name` 属性是后端接收的参数名，可用来推测后端逻辑。
