@@ -2,11 +2,11 @@ XSS（跨站脚本攻击）与 [[SQL注入]] 同为 OWASP Top 10 中的经典 We
 
 ---
 
-## 一、概念
+# 一、概念
 
-XSS（Cross-Site Scripting，跨站脚本攻击）是一种代码注入攻击。攻击者将恶意脚本注入到可信网站的页面中，当其他用户浏览该页面时，恶意脚本会在用户浏览器中执行[-5](https://semgrep.dev/docs/learn/vulnerabilities/cross-site-scripting)。由于这些代码来自“可信”站点，浏览器会默认授予其访问 Cookie、会话令牌等敏感信息的权限[-5](https://semgrep.dev/docs/learn/vulnerabilities/cross-site-scripting)。
+XSS（Cross-Site Scripting，跨站脚本攻击）是一种代码注入攻击。攻击者将恶意脚本注入到可信网站的页面中，当其他用户浏览该页面时，**恶意脚本**会在用户浏览器中执行[-5](https://semgrep.dev/docs/learn/vulnerabilities/cross-site-scripting)。由于这些代码来自“可信”站点，浏览器会默认授予其访问 Cookie、会话令牌等敏感信息的权限[-5](https://semgrep.dev/docs/learn/vulnerabilities/cross-site-scripting)。
 
-**核心危害**：JavaScript 在浏览器中能做到的事情，XSS 攻击几乎都能做到-。包括窃取 Cookie 实现会话劫持、执行未授权操作、键盘记录、钓鱼攻击、传播蠕虫等[-11](https://developer.baidu.com/article/detail.html?id=3361362)。
+**核心危害**：**JavaScript 在浏览器中能做到的事情，XSS 攻击几乎都能做到。** 包括窃取 Cookie 实现会话劫持、执行未授权操作、键盘记录、钓鱼攻击、传播蠕虫等[-11](https://developer.baidu.com/article/detail.html?id=3361362)。
 
 XSS 是 CVE 数据库中报告最频繁的 Web 漏洞之一，长期位于 OWASP Top 10 榜单[-5](https://semgrep.dev/docs/learn/vulnerabilities/cross-site-scripting)。
 
