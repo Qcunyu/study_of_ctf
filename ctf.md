@@ -16,3 +16,6 @@ SQL注入
 ## 语言
 前端
 [[HTML]] [[JavaScript]] [[CSS]]
+
+## 攻击
+[[XSS]]
